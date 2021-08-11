@@ -9,6 +9,7 @@ from basemodels.fb_deepface import FbDeepFaceFeatureExtractor
 from basemodels.deep_id import DeepIDFeatureExtractor
 from basemodels.arc_face import ArcFaceFeatureExtractor
 
+import time
 import matplotlib.pyplot as plt
 
 
@@ -30,7 +31,7 @@ REPRESENT_MODELS_MAPPING = {
 
 
 DETECTOR_BACKEND = "retinaface"
-REPRESENT_MODEL = "ArcFace"
+REPRESENT_MODEL = "Facenet"
 FACE_RECOGNITION_THRESHOLD = 0.90
 
 
@@ -55,21 +56,29 @@ class FaceDetectAndRepresentProcessor(object):
     def predict(cls, image_data):
         face_detector, face_features_extractor = cls.load_model()
 
-        # Step 1: detect and align faces in input image
-        detected_and_aligned_faces = face_detector.detect_face(image_data, align=True)
+        iter_times = 100
 
-        for face_obj in detected_and_aligned_faces:
-            aligned_face_image = face_obj['detected_face']      # BGR
-            confidence = face_obj['confidence']
-            landmarks = face_obj['landmarks']
+        t1 = time.time()
+        for i in range(iter_times):
+            # Step 1: detect and align faces in input image
+            detected_and_aligned_faces = face_detector.detect_face(image_data, align=True)
 
-            if confidence < FACE_RECOGNITION_THRESHOLD:
-                continue
+            for face_obj in detected_and_aligned_faces:
+                aligned_face_image = face_obj['detected_face']      # BGR
+                confidence = face_obj['confidence']
+                landmarks = face_obj['landmarks']
 
-            # Step 2: face embedding feature vector extraction
-            face_embedding_vectors = face_features_extractor.represent(aligned_face_image)
-            print('len(face_embedding_vectors) = {}'.format(len(face_embedding_vectors)))
-            print('face_embedding_vectors = {}'.format(face_embedding_vectors))
+                if confidence < FACE_RECOGNITION_THRESHOLD:
+                    continue
+
+                # Step 2: face embedding feature vector extraction
+                face_embedding_vectors = face_features_extractor.represent(aligned_face_image)
+                print('len(face_embedding_vectors) = {}'.format(len(face_embedding_vectors)))
+                print('face_embedding_vectors = {}'.format(face_embedding_vectors))
+
+        t2 = time.time()
+        time_cost = t2 - t1
+        print('Time cost = {} seconds'.format(time_cost / iter_times))
 
         # return detected_and_aligned_faces, face_embedding_vectors
 
