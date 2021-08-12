@@ -2,7 +2,6 @@ import cv2
 from detectors.retinaface_detector import RetinaFaceDetector
 from detectors.mtcnn_detector import MTCNNDetector
 
-from basemodels.vgg_face import VGGFaceFeatureExtractor
 from basemodels.facenet import FacenetFeatureExtractor
 from basemodels.facenet512 import Facenet512FeatureExtractor
 from basemodels.arc_face import ArcFaceFeatureExtractor
@@ -23,7 +22,7 @@ REPRESENT_MODELS_MAPPING = {
 
 
 DETECTOR_BACKEND = "retinaface"
-REPRESENT_MODEL = "VGG-Face"
+REPRESENT_MODEL = "Facenet512"
 FACE_RECOGNITION_THRESHOLD = 0.90
 
 
